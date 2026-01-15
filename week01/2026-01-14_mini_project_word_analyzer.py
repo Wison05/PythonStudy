@@ -1,4 +1,6 @@
 import re
+from collections import Counter
+
 
 def read_text_list(L):
     return [word for i in range(L) for word in input().split()]
@@ -19,21 +21,17 @@ def reduce_text_length(text_list):
 def masking_ban_words(text_list,ban_list):
     return ["***" if text in ban_list else text for text in text_list ]
 
-def ratio_cnt_dict(text_list):
-    text_ratio_dict = {}
-    total = len(text_list)
-    for text in text_list:
-        if text == "***" : continue
-        cnt = text.count(text)
-        ratio = cal_ratio(cnt,total)
-        text_ratio_dict[text] = cnt, ratio
-    return text_ratio_dict
+def ratio_cnt_dict(text_list): #edit part
+    filtered = [t for t in text_list if t != "***"]
+    total = len(filtered)
+    cnt = Counter(filtered)
+    return {word: (cnts,(cnts/total if total else 0.0)) for word,cnts in cnt.items()}
 
 def cal_ratio(cnt,total):
     return cnt/total
 
 def return_top_n(text_ratio_dict,N):
-    return dict(sorted(text_ratio_dict.items(), key=lambda x: x[1], reverse=True)[:N])
+    return dict(sorted(text_ratio_dict.items(), key=lambda x: x[1][0], reverse=True)[:N]) #edit part
 
 L = int(input()) #review text line number
 text_list = read_text_list(L)
