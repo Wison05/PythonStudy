@@ -2,22 +2,33 @@ def open_file(filename): #open_file with exception
     try :
         f = open(filename+".txt","r")
         f = f.read()
-        return f
+        lines = f.strip().split("\n")
+        return [line for line in lines if line.strip()]
     except FileNotFoundError:
         print("File not found")
         raise SystemExit
 
-def change_str_to_int(file):
-    for text in file:
-        if '-' in text:
-            text = text.replace('-','')
-            if text.isdigit():
-                text = int("-".join(text))
-        if text.isdigit():
-            text = int(text)
-    return file #stuck in this problem
+def try_parse_int(line: str):
+    t = line.strip()
+    try:
+        return True, int(t)
+    except ValueError:
+        return False, 0
+
+def change_type_cal(lines):
+    invalid_lines = []
+    total = 0
+    for line in lines:
+        ok, value = try_parse_int(line)
+        if ok:
+            total += value
+        else:
+            invalid_lines.append(line)
+    return invalid_lines, total
 
 filename = input()
 file = open_file(filename)
-file = change_str_to_int(file)
-print(file)
+file,total = change_type_cal(file)
+for i in file:
+    print("Invalid line:",i)
+print("sum:",total)
